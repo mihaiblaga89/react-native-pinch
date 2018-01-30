@@ -128,8 +128,21 @@ RCT_EXPORT_METHOD(fetch:(NSString *)url obj:(NSDictionary *)obj callback:(RCTRes
             [request setAllHTTPHeaderFields:m];
         }
         if (obj[@"body"]) {
-            NSData *data = [obj[@"body"] dataUsingEncoding:NSUTF8StringEncoding];
-            [request setHTTPBody:data];
+            NSArray *keys = [NSArray arrayWithObjects:@"ping", nil];
+            NSArray *objects = [NSArray arrayWithObjects:@"check", nil];
+            
+            NSDictionary *jsonDictionary = [NSDictionary dictionaryWithObjects:objects forKeys:keys];
+            NSData *jsonData ;
+            NSString *jsonString;
+            if([NSJSONSerialization isValidJSONObject:jsonDictionary])
+            {
+                jsonData = [NSJSONSerialization dataWithJSONObject:jsonDictionary options:0 error:nil];
+                jsonString = [[NSString alloc]initWithData:jsonData encoding:NSUTF8StringEncoding];
+            }
+            [request setValue:@"application/json" forHTTPHeaderField:@"Content-Type"];
+            [request setValue:[NSString stringWithFormat:@"%lu", (unsigned long)[jsonData length]] forHTTPHeaderField:@"Content-Length"];
+
+            [request setHTTPBody:jsonData];
         }
     }
     if (obj && obj[@"sslPinning"] && obj[@"sslPinning"][@"cert"]) {
@@ -170,3 +183,4 @@ RCT_EXPORT_METHOD(fetch:(NSString *)url obj:(NSDictionary *)obj callback:(RCTRes
 }
 
 @end
+
