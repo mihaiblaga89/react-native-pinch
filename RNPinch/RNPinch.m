@@ -6,8 +6,13 @@
 //  Copyright © 2016 Localz. All rights reserved.
 //
 
-#import "RNPinch.h"
+#if __has_include(<React/RCTBridge.h>)
+#import <React/RCTBridge.h>
+#else
 #import "RCTBridge.h"
+#endif
+
+#import "RNPinch.h"
 
 @interface RNPinchException : NSException
 @end
